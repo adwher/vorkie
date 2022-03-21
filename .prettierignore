@@ -1,1 +1,19 @@
-*.json
+# Node.js
+
+node_modules
+.node_history
+*.heapsnapshot
+
+# Build
+
+dist
+build
+.temp
+.turbo
+.cache
+
+# Logs
+
+package.json
+package-lock.json
+yarn.lock
