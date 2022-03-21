@@ -9,14 +9,17 @@ export interface ServerConfig {
     host?: string
     port?: number
 
-    bodyLimit?: `${number}${"b" | "kb" | "mb" | "gb" | "tb"}`
+    bodyLimit?: `${number}${"b" | "kb" | "mb" | "gb"}`
 }
 
 export function createServer(config: ServerConfig): Server {
     const server = polka()
 
-    server.use(bodyParser.json({ limit: "10mb" }))
-    server.use(bodyParser.urlencoded())
+    const json = bodyParser.json({ limit: config.bodyLimit ?? "10mb" })
+    const urlencoded = bodyParser.urlencoded()
+
+    server.use(urlencoded)
+    server.use(json)
 
     server.get("/_ping", pong())
 
@@ -29,6 +32,7 @@ export function startServer(server: Server, config: ServerConfig) {
 
 function pong(): Middleware {
     return async (req, res) => {
+        res.setHeader("X-Powered-By", "Vormik")
         res.end("_pong")
     }
 }

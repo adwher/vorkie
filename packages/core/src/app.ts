@@ -1,20 +1,24 @@
 import { Server, ServerConfig, createServer, startServer } from "$/server"
 import { Collection } from "$/collection"
+import { Database } from "$/database"
 
 import { merge } from "lodash"
 
 interface AppConfig {
     server: ServerConfig
     collections: Set<Collection>
+    database: Database
 }
 
 export class App {
     protected server: Server
     protected collections: Set<Collection>
+    protected database: Database
 
     constructor(protected readonly config: AppConfig) {
         this.server = createServer(config.server)
         this.collections = config.collections
+        this.database = config.database
     }
 
     // Lifecycle
@@ -39,6 +43,7 @@ export class App {
 interface CreateAppConfig {
     collections?: Set<Collection>
     server?: ServerConfig
+    database: Database
 }
 
 export function createApp(config: CreateAppConfig) {
@@ -49,6 +54,12 @@ export function createApp(config: CreateAppConfig) {
         },
 
         collections: new Set(),
+
+        database: config.database,
+    }
+
+    if (!config.database) {
+        throw new Error("No database provided")
     }
 
     return new App(merge(fallback, config))
