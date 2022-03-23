@@ -1,7 +1,8 @@
 export { createApp, App } from "./app"
 export { createCollection, Collection } from "./collection"
 
-export type { Database } from "./database"
+export type { Request, Response, Middleware } from "./server"
+export type { Database, DatabaseQuery } from "./database"
 
 // Fields
 

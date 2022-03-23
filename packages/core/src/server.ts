@@ -1,9 +1,17 @@
 import polka from "polka"
-import bodyParser from "body-parser"
+import http from "http"
+
+import { json as jsonMiddleware } from "body-parser"
+
+export type Request = http.IncomingMessage & {
+    originalUrl?: string
+    query?: Record<string, unknown>
+}
+
+export type Response = http.ServerResponse
 
 export type Server = polka.Polka
-
-export type Middleware = polka.Middleware
+export type Middleware = (req: Request, res: Response, next: polka.Next) => void
 
 export interface ServerConfig {
     host?: string
@@ -15,13 +23,13 @@ export interface ServerConfig {
 export function createServer(config: ServerConfig): Server {
     const server = polka()
 
-    const json = bodyParser.json({ limit: config.bodyLimit ?? "10mb" })
-    const urlencoded = bodyParser.urlencoded()
+    server.use(
+        jsonMiddleware({
+            limit: config.bodyLimit,
+        })
+    )
 
-    server.use(urlencoded)
-    server.use(json)
-
-    server.get("/_ping", pong())
+    server.get("/_ping", ping())
 
     return server
 }
@@ -30,7 +38,7 @@ export function startServer(server: Server, config: ServerConfig) {
     server.listen(config.port, config.host)
 }
 
-function pong(): Middleware {
+function ping(): Middleware {
     return async (req, res) => {
         res.setHeader("X-Powered-By", "Vormik")
         res.end("_pong")

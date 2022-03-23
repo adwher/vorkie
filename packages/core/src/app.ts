@@ -1,6 +1,14 @@
-import { Server, ServerConfig, createServer, startServer } from "$/server"
+import {
+    Server,
+    ServerConfig,
+    Middleware,
+    createServer,
+    startServer,
+} from "$/server"
+
 import { Collection } from "$/collection"
 import { Database } from "$/database"
+import { Logger, LoggerConfig, createLogger } from "$/logger"
 
 import { merge } from "lodash"
 
@@ -8,26 +16,27 @@ interface AppConfig {
     server: ServerConfig
     collections: Set<Collection>
     database: Database
+    logger: LoggerConfig
 }
 
 export class App {
-    protected server: Server
-    protected collections: Set<Collection>
-    protected database: Database
+    protected readonly server: Server
+
+    public readonly collections: Set<Collection>
+    public readonly database: Database
+    public readonly logger: Logger
 
     constructor(protected readonly config: AppConfig) {
         this.server = createServer(config.server)
+        this.logger = createLogger(config.logger)
+
         this.collections = config.collections
         this.database = config.database
     }
 
-    // Lifecycle
-
     protected async beforeMount() {}
 
     protected async beforeUnmount() {}
-
-    // Controllers
 
     public async start() {
         await this.beforeMount()
@@ -38,10 +47,14 @@ export class App {
     public async close() {
         await this.beforeUnmount()
     }
+
+    public use(fn: Middleware) {
+        this.server.use(fn)
+    }
 }
 
 interface CreateAppConfig {
-    collections?: Set<Collection>
+    collections?: Array<Collection>
     server?: ServerConfig
     database: Database
 }
@@ -53,9 +66,16 @@ export function createApp(config: CreateAppConfig) {
             port: 1340,
         },
 
-        collections: new Set(),
+        logger: {
+            thresh: 0,
+        },
 
         database: config.database,
+        collections: new Set(),
+    }
+
+    if (config.collections && !Array.isArray(config.collections)) {
+        throw new Error("Expected collections to be an array")
     }
 
     if (!config.database) {

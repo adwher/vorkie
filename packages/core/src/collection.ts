@@ -1,4 +1,5 @@
 import { Field } from "$/field"
+import { entries } from "lodash"
 
 interface CollectionConfig {
     /**
@@ -11,11 +12,17 @@ interface CollectionConfig {
     description?: string
 
     /** Describe the fields used by the collection */
-    fields: Array<Field>
+    schema: Record<string, Field>
 }
 
 export class Collection {
-    constructor(protected readonly config: CollectionConfig) {}
+    public name: string
+    protected schema: Map<string, Field>
+
+    constructor(protected readonly config: CollectionConfig) {
+        this.name = config.name
+        this.schema = new Map(entries(config.schema))
+    }
 }
 
 interface CreateCollectionConfig extends CollectionConfig {}
