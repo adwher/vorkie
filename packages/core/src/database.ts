@@ -5,13 +5,13 @@ export interface Database {
      * Allows to query the database.
      * @param collection A {@link Collection} to query.
      * */
-    from(collection: Collection): DatabaseQuery
+    from(collection: Collection): QueryBuilder
 
     /**
      * Allows to query the database.
      * @param name A {@link Collection} name to query.
      * */
-    from(name: string): DatabaseQuery
+    from(name: string): QueryBuilder
 
     /** A unsafe way to executes a raw query into database. */
     raw(query: string, params: Record<string, unknown>): Promise<unknown>
@@ -20,25 +20,37 @@ export interface Database {
     migrate(collections: Set<Collection>): Promise<void>
 }
 
-export interface DatabaseQuery {
+export type QueryWhereOperator = "==" | "!=" | ">=" | "<=" | ">" | "<"
+
+export interface QueryBuilder {
     /** Adds a order-by clause to the query. */
-    orderBy(field: string, direction: "asc" | "desc"): DatabaseQuery
+    orderBy(field: string, direction: "asc" | "desc"): QueryBuilder
 
     /** Sets the limit of items. */
-    limitBy(count: number, offset?: number): DatabaseQuery
+    limitBy(count: number, offset?: number): QueryBuilder
+
+    /** Adds fields to select */
+    select(...fields: string[]): QueryBuilder
+
+    /** Adds filters to query */
+    where(
+        field: string,
+        operator: QueryWhereOperator,
+        value: unknown
+    ): QueryBuilder
 
     /** Executes the query and fetch the count of items. */
     count(): Promise<number>
 
     /** Fetchs the first element in the query result. */
-    single<Data>(): Promise<Data | undefined>
+    single<D>(): Promise<D | undefined>
 
     /** Fetchs all results into the query. */
-    list<Data>(): Promise<Data[]>
+    list<D>(): Promise<D[]>
 
     /** Updates partial data using the query. */
-    update<Data>(data: Partial<Data>): Promise<Data[]>
+    update<D>(data: Partial<D>): Promise<D[]>
 
     /** Deletes data based on query clauses an return affected data. */
-    delete<Data>(): Promise<Data[]>
+    delete<D>(): Promise<D[]>
 }
