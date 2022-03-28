@@ -4,6 +4,7 @@
         "module": "CommonJS",
         "outDir": "./dist",
         "rootDir": "./src",
+        "downlevelIteration": true,
         "paths": {
             "$/*": ["./src/*"]
         }

@@ -16,17 +16,40 @@ interface CollectionConfig {
 }
 
 export class Collection {
-    public name: string
-    protected schema: Map<string, Field>
+    public readonly name: string
+    public readonly schema: Map<string, Field>
 
     constructor(protected readonly config: CollectionConfig) {
         this.name = config.name
         this.schema = new Map(entries(config.schema))
     }
+
+    /** Creates a {@link Collection} instance from their config */
+    static from(config: CollectionConfig) {
+        return new Collection(config)
+    }
+
+    addField(name: string, field: Field) {
+        this.schema.set(name, field)
+        return this
+    }
 }
 
-interface CreateCollectionConfig extends CollectionConfig {}
-
-export function createCollection(config: CreateCollectionConfig): Collection {
+/**
+ * A collection factory
+ * @example
+ * ```ts
+ * const User = createCollection({
+ *  name: "users",
+ *  description: "A simple user",
+ *  schema: {
+ *      firstname: text(),
+ *      lastname: text(),
+ * })
+ * ```
+ *
+ * @param config Configuration for the collection
+ */
+export function createCollection(config: CollectionConfig): Collection {
     return new Collection(config)
 }

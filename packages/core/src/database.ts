@@ -10,8 +10,8 @@ export interface Database {
     /** A unsafe way to executes a raw query into database. */
     raw(query: string, params: Record<string, unknown>): Promise<unknown>
 
-    /** Executes all migrations needed based on {@link Collection collections}. */
-    migrate(collections: Set<Collection>): Promise<void>
+    /** Executes all migrations needed based on a {@link Collection collection}. */
+    migrate(collection: Collection): Promise<void>
 }
 
 export type QueryWhereOperator = "==" | "!=" | ">=" | "<=" | ">" | "<"

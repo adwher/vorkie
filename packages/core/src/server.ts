@@ -34,7 +34,7 @@ export function createServer(config: ServerConfig): Server {
     return server
 }
 
-export function startServer(server: Server, config: ServerConfig) {
+export async function startServer(server: Server, config: ServerConfig) {
     server.listen(config.port, config.host)
 }
 
