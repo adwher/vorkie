@@ -13,22 +13,18 @@ interface Limit {
 }
 
 export class ArangoQueryBuilder implements QueryBuilder {
-    protected readonly connector: Connector
-    protected readonly from: string
-
     protected filters: Set<string>
     protected sorts: Set<Sort>
     protected limit?: Limit
     protected fields: Set<string>
 
-    constructor(connector: Connector, collection: Collection | string) {
+    constructor(
+        protected readonly connector: Connector,
+        protected readonly from: Collection | string
+    ) {
         this.sorts = new Set()
         this.filters = new Set()
         this.fields = new Set()
-
-        this.connector = connector
-        this.from =
-            collection instanceof Collection ? collection.name : collection
     }
 
     protected buildQuery() {
@@ -141,6 +137,15 @@ export class ArangoQueryBuilder implements QueryBuilder {
 
         const result = await this.connector.query(query)
         return await result.all()
+    }
+
+    async insert<Data>(data: Data): Promise<Data> {
+        const query = `
+            INSERT ${JSON.stringify(data)} INTO ${this.from} RETURN NEW
+        `
+
+        const result = await this.connector.query(query)
+        return await result.next()
     }
 
     async update<Data>(data: Partial<Data>): Promise<Data[]> {

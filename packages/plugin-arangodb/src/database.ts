@@ -40,7 +40,7 @@ export class ArangoDatabase implements Database {
         return this.connector.query(query, params)
     }
 
-    from(collection: Collection | string) {
+    from(collection: string) {
         return new ArangoQueryBuilder(this.connector, collection)
     }
 }
