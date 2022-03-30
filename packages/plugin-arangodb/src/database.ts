@@ -22,14 +22,11 @@ export class ArangoDatabase implements Database {
         })
     }
 
-    async migrate(collections: Set<Collection>) {
-        for (const collection of collections) {
-            const table = this.connector.collection(collection.name)
-            const exist = await table.exists()
+    async migrate(collection: Collection) {
+        const table = this.connector.collection(collection.name)
+        const exist = await table.exists()
 
-            if (exist) continue
-            await table.create()
-        }
+        if (!exist) await table.create()
     }
 
     async raw(query: unknown, params: Record<string, unknown>) {
