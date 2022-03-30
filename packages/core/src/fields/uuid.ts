@@ -9,8 +9,13 @@ export class UUIDField extends Field<UUIDFieldConfig> {
         super(config)
     }
 
-    beforeChange(value?: unknown): unknown {
+    beforeCreate(value?: unknown): unknown {
         return value ?? createID()
+    }
+
+    beforeUpdate(value?: unknown): unknown {
+        if (!value) return
+        throw new Error("An uuid cannot be updated")
     }
 }
 

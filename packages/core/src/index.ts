@@ -3,7 +3,13 @@ export { createCollection, Collection } from "./collection"
 
 export type { Plugin } from "./plugins"
 export type { Request, Response, Middleware } from "./server"
-export type { Database, QueryBuilder, QueryWhereOperator } from "./database"
+
+export type {
+    RawData,
+    Database,
+    QueryBuilder,
+    QueryWhereOperator,
+} from "./database"
 
 // Fields
 

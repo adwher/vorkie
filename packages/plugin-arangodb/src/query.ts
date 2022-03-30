@@ -1,5 +1,6 @@
-import { Collection, QueryBuilder, QueryWhereOperator } from "vormik"
+import { Collection, RawData, QueryBuilder, QueryWhereOperator } from "vormik"
 import { Database as Connector } from "arangojs"
+
 import _ from "lodash"
 
 interface Sort {
@@ -13,6 +14,8 @@ interface Limit {
 }
 
 export class ArangoQueryBuilder implements QueryBuilder {
+    protected readonly from: string
+
     protected filters: Set<string>
     protected sorts: Set<Sort>
     protected limit?: Limit
@@ -20,8 +23,10 @@ export class ArangoQueryBuilder implements QueryBuilder {
 
     constructor(
         protected readonly connector: Connector,
-        protected readonly from: Collection | string
+        protected readonly collection: Collection
     ) {
+        this.from = collection.name
+
         this.sorts = new Set()
         this.filters = new Set()
         this.fields = new Set()
@@ -102,21 +107,24 @@ export class ArangoQueryBuilder implements QueryBuilder {
         const statement = this.buildQuery()
 
         const query = `
-            FOR doc IN ${this.from}\n
+            FOR doc IN ${this.from}
                 ${statement}
-                RETURN COUNT(doc)
+                COLLECT WITH COUNT INTO length
+                RETURN length
         `
 
-        const result = await this.connector.query(query, {}, { count: true })
-        return result.count ?? 0
+        const result = await this.connector.query(query)
+        const count = await result.next()
+
+        return Number(count)
     }
 
-    async single<Data>(): Promise<Data | undefined> {
+    async single(): Promise<RawData | undefined> {
         const statement = this.buildQuery()
         const select = this.buildSelect()
 
         const query = `
-            FOR doc IN ${this.from}\n
+            FOR doc IN ${this.from}
                 ${statement}
                 ${select}
         `
@@ -125,12 +133,12 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.next()
     }
 
-    async list<Data>(): Promise<Data[]> {
+    async list(): Promise<RawData[]> {
         const statement = this.buildQuery()
         const select = this.buildSelect()
 
         const query = `
-            FOR doc IN ${this.from}\n
+            FOR doc IN ${this.from}
                 ${statement}
                 ${select}
         `
@@ -139,22 +147,25 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.all()
     }
 
-    async insert<Data>(data: Data): Promise<Data> {
+    async insert(data: Partial<RawData>): Promise<RawData> {
+        const payload = this.collection.beforeCreate(data)
+
         const query = `
-            INSERT ${JSON.stringify(data)} INTO ${this.from} RETURN NEW
+            INSERT ${JSON.stringify(payload)} INTO ${this.from}
+            RETURN NEW
         `
 
         const result = await this.connector.query(query)
         return await result.next()
     }
 
-    async update<Data>(data: Partial<Data>): Promise<Data[]> {
+    async update(data: Partial<RawData>): Promise<RawData[]> {
         const statement = this.buildQuery()
         const select = this.buildSelect("NEW")
-        const payload = JSON.stringify(data)
+        const payload = JSON.stringify(this.collection.beforeUpdate(data))
 
         const query = `
-            FOR doc IN ${this.from}\n
+            FOR doc IN ${this.from}
                 ${statement}
                 UPDATE doc WITH ${payload} IN ${this.from}
                 ${select}
@@ -164,12 +175,12 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.all()
     }
 
-    async delete<Data>(): Promise<Data[]> {
+    async delete(): Promise<RawData[]> {
         const statement = this.buildQuery()
         const select = this.buildSelect()
 
         const query = `
-            FOR doc IN ${this.from}\n
+            FOR doc IN ${this.from}
                 ${statement}
                 REMOVE doc IN ${this.from}
                 ${select}

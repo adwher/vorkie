@@ -13,6 +13,14 @@ export class TextField extends Field<TextFieldConfig> {
     constructor(config: TextFieldConfig) {
         super(config)
     }
+
+    beforeCreate(value?: unknown): unknown {
+        return value
+    }
+
+    beforeUpdate(value?: unknown): unknown {
+        return value
+    }
 }
 
 /** Defines a text-based field */

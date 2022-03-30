@@ -1,4 +1,5 @@
 import { Database as Connector } from "arangojs"
+import { find } from "lodash"
 import { Collection, Database } from "vormik"
 import { ArangoQueryBuilder } from "./query"
 
@@ -12,9 +13,12 @@ interface ArangoDBConfig {
 }
 
 export class ArangoDatabase implements Database {
-    protected connector: Connector
+    protected readonly connector: Connector
+    protected readonly collections: Map<string, Collection>
 
     constructor(protected readonly config: ArangoDBConfig) {
+        this.collections = new Map()
+
         this.connector = new Connector({
             url: config.url,
             databaseName: config.database,
@@ -22,14 +26,18 @@ export class ArangoDatabase implements Database {
         })
     }
 
-    async migrate(collection: Collection) {
+    public async migrate(collection: Collection) {
+        if (this.collections.has(collection.name)) return
+
         const table = this.connector.collection(collection.name)
         const exist = await table.exists()
+
+        this.collections.set(collection.name, collection)
 
         if (!exist) await table.create()
     }
 
-    async raw(query: unknown, params: Record<string, unknown>) {
+    public async raw(query: unknown, params: Record<string, unknown>) {
         if (typeof query !== "string") {
             throw new Error("Query must be a string")
         }
@@ -37,7 +45,13 @@ export class ArangoDatabase implements Database {
         return this.connector.query(query, params)
     }
 
-    from(collection: string) {
-        return new ArangoQueryBuilder(this.connector, collection)
+    from(name: string) {
+        const collection = this.collections.get(name)
+
+        if (collection) {
+            return new ArangoQueryBuilder(this.connector, collection)
+        }
+
+        throw new Error(`Collection '${name}' not defined`)
     }
 }
