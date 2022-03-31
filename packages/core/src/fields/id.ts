@@ -2,10 +2,10 @@ import { Field, FieldConfig } from "$/field"
 import { createID } from "$/utils/crypto"
 import { merge } from "lodash"
 
-interface UUIDFieldConfig extends FieldConfig {}
+interface IdentifierFieldConfig extends FieldConfig {}
 
-export class UUIDField extends Field<UUIDFieldConfig> {
-    constructor(config: UUIDFieldConfig) {
+export class IdentifierField extends Field<IdentifierFieldConfig> {
+    constructor(config: IdentifierFieldConfig) {
         super(config)
     }
 
@@ -20,7 +20,7 @@ export class UUIDField extends Field<UUIDFieldConfig> {
 }
 
 /** Defines a auto-generated UUID field */
-export function uuid(config?: UUIDFieldConfig) {
-    const fallback: UUIDFieldConfig = {}
-    return new UUIDField(merge(fallback, config))
+export function id(config?: IdentifierFieldConfig) {
+    const fallback: IdentifierFieldConfig = {}
+    return new IdentifierField(merge(fallback, config))
 }

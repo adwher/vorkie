@@ -1,10 +1,10 @@
-import { green, red, blue, yellow } from "colorette"
+import { green, red, blue, yellow, gray } from "colorette"
 
 export enum LoggerLevel {
-    INFO,
-    WARNING,
-    ERROR,
     SILENT,
+    ERROR,
+    WARNING,
+    INFO,
 }
 
 export interface LoggerConfig {
@@ -41,6 +41,12 @@ export class Logger {
 
         if (this.thresh >= LoggerLevel.ERROR) {
             console.error(red("error") + ` ${message}`)
+
+            if (payload instanceof Error) {
+                console.log()
+                console.log(gray(payload.stack as string))
+                console.log()
+            }
         }
     }
 }

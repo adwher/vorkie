@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import {
-    createApp,
-    App,
-    createCollection,
-    Collection,
-    text,
-    TextField,
-} from "../dist/index"
+import { createApp, App, createCollection, Collection } from "../dist/index"
 
 describe("App", () => {
     it("createApp()", () => {
@@ -26,17 +19,5 @@ describe("Collection", () => {
 
     it("new Collection()", () => {
         expect(typeof Collection).toBe("function")
-    })
-})
-
-describe("Fields", () => {
-    describe("Text", () => {
-        it("text()", () => {
-            expect(typeof text).toBe("function")
-        })
-
-        it("new TextField()", () => {
-            expect(typeof TextField).toBe("function")
-        })
     })
 })

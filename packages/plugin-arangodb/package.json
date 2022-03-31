@@ -7,8 +7,7 @@
     "license": "MIT",
     "scripts": {
         "dev": "tsup --watch",
-        "build": "tsup",
-        "test": "vitest run"
+        "build": "tsup"
     },
     "dependencies": {
         "arangojs": "^7.7.0",
