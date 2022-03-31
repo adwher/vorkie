@@ -4,16 +4,26 @@ import { entries } from "lodash"
 
 interface CollectionConfig {
     /**
-     * Plural collection name
-     * @example "users"
-     * */
+     * Plural collection name.
+     *
+     * @example
+     * ```ts
+     * const Users = new Collection({
+     *      name: "users",
+     *      // config...
+     * })
+     * ```
+     */
     name: string
 
-    /** Define a description to the collection */
+    /** Define a description to the collection. */
     description?: string
 
-    /** Describe the fields used by the collection */
+    /** Describe the fields used by the collection. */
     schema: Record<string, Field<FieldConfig>>
+
+    /** Sets the collections as private and their use will be restricted to internal-only. */
+    private?: boolean
 }
 
 export class Collection {
@@ -25,12 +35,19 @@ export class Collection {
         this.schema = new Map(entries(config.schema))
     }
 
-    /** Creates a {@link Collection} instance from their config */
-    static from(config: CollectionConfig) {
-        return new Collection(config)
+    /** Creates a private {@link Collection} instance from their config */
+    public static from(config: CollectionConfig) {
+        return new Collection({
+            ...config,
+            private: true,
+        })
     }
 
-    addField<C>(name: string, field: Field<C>) {
+    public isPrivate() {
+        return this.config.private ?? false
+    }
+
+    public addField<C>(name: string, field: Field<C>) {
         this.schema.set(name, field)
         return this
     }

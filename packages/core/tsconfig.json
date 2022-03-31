@@ -3,8 +3,8 @@
         "lib": ["ES2017"],
         "module": "CommonJS",
         "outDir": "./dist",
+        "target": "ES2017",
         "rootDir": "./src",
-        "downlevelIteration": true,
         "paths": {
             "$/*": ["./src/*"]
         }

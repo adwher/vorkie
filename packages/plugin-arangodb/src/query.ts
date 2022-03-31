@@ -162,12 +162,12 @@ export class ArangoQueryBuilder implements QueryBuilder {
     async update(data: Partial<RawData>): Promise<RawData[]> {
         const statement = this.buildQuery()
         const select = this.buildSelect("NEW")
-        const payload = JSON.stringify(this.collection.beforeUpdate(data))
+        const payload = this.collection.beforeUpdate(data)
 
         const query = `
             FOR doc IN ${this.from}
                 ${statement}
-                UPDATE doc WITH ${payload} IN ${this.from}
+                UPDATE doc WITH ${JSON.stringify(payload)} IN ${this.from}
                 ${select}
         `
 
