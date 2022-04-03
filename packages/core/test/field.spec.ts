@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest"
 
-import { text, TextField, id, IdentifierField } from "../dist/index"
+import {
+    text,
+    TextField,
+    id,
+    IdentifierField,
+    timestamp,
+    TimestampField,
+} from "../dist/index"
 
 describe("Text", () => {
     it("text()", () => {
@@ -27,5 +34,19 @@ describe("Identifier", () => {
 
     it("id() creates IdentifierField()", () => {
         expect(id() instanceof IdentifierField).toBe(true)
+    })
+})
+
+describe("Timestamp", () => {
+    it("timestamp()", () => {
+        expect(typeof timestamp).toBe("function")
+    })
+
+    it("new TimestampField()", () => {
+        expect(typeof TimestampField).toBe("function")
+    })
+
+    it("timestamp() creates TimestampField()", () => {
+        expect(timestamp() instanceof TimestampField).toBe(true)
     })
 })

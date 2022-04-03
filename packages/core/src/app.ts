@@ -8,7 +8,7 @@ import {
 
 import { Collection } from "$/collection"
 import { Database } from "$/database"
-import { Logger, LoggerConfig, createLogger } from "$/logger"
+import { Logger, LoggerConfig, LoggerLevel, createLogger } from "$/logger"
 import { Plugin } from "$/plugins"
 
 export interface AppConfig {
@@ -31,19 +31,24 @@ export class App {
     protected mounted: boolean
 
     constructor(config: AppConfig) {
-        this.server = createServer(config.server)
-        this.logger = createLogger(config.logger)
-
-        this.collections = config.collections
         this.database = config.database
         this.plugins = config.plugins
 
-        for (const plugin of this.plugins) {
+        for (const plugin of config.plugins) {
             config = plugin.beforeCreated(config)
         }
 
+        this.collections = config.collections
         this.config = config
+
+        this.server = createServer(config.server)
+        this.logger = createLogger(config.logger)
+
         this.mounted = false
+    }
+
+    public isMounted() {
+        return this.mounted
     }
 
     protected async beforeMount() {
@@ -56,21 +61,17 @@ export class App {
         }
     }
 
-    protected async beforeUnmount() {
-        for (const plugin of this.plugins) {
-            await plugin.beforeUnmount?.()
-        }
-    }
-
-    public isMounted() {
-        return this.mounted
-    }
-
     public async start() {
         await this.beforeMount()
         await startServer(this.server, this.config.server)
 
         this.mounted = true
+    }
+
+    protected async beforeUnmount() {
+        for (const plugin of this.plugins) {
+            await plugin.beforeUnmount?.()
+        }
     }
 
     public async close() {
@@ -109,10 +110,11 @@ export function createApp(config: CreateAppConfig) {
         },
 
         logger: {
-            thresh: 0,
+            thresh: LoggerLevel.INFO,
         },
 
         database: config.database,
+
         collections: new Set(config.collections),
         plugins: new Set(config.plugins),
     }

@@ -1,5 +1,5 @@
 export interface FieldConfig {
-    /** Define a description to the field */
+    /** Define a description to the field who could be exposed using {@link https://spec-md.com/#sec-Markdown markdown} syntax */
     description?: string
 }
 

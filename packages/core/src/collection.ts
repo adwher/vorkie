@@ -35,7 +35,7 @@ export class Collection {
         this.schema = new Map(entries(config.schema))
     }
 
-    /** Creates a private {@link Collection} instance from their config */
+    /** Creates a private {@link Collection} instance from their config. */
     public static from(config: CollectionConfig) {
         return new Collection({
             ...config,
@@ -47,6 +47,7 @@ export class Collection {
         return this.config.private ?? false
     }
 
+    /** Adds fields to the collections, useful to plugins and extensions. */
     public addField<C>(name: string, field: Field<C>) {
         this.schema.set(name, field)
         return this
