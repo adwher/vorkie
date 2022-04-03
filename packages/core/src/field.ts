@@ -7,20 +7,21 @@ export abstract class Field<C extends FieldConfig> {
     constructor(protected readonly config: C) {}
 
     /**
-     * Runs before the data is created within an `insert` operation.
-     * At this stage, you can be confident that the data that will be saved to the document is valid in accordance to your field validations.
-     *
+     * Runs before operations for cheking that it conforms to certain rules.
      * You can optionally modify the shape of data to be saved or `throw` an error if the data is invalid.
-     * @throws {@link Error} if the data is invalid
+     * @throws {@link Error} Data is invalid
+     */
+    abstract beforeValidate(value?: unknown): unknown
+
+    /**
+     * Immediately following validation, runs before the data is created within an `insert` operation.
+     * You can optionally modify the shape of data to be saved, useful to auto-generated fields.
      */
     abstract beforeCreate(value?: unknown): unknown
 
     /**
-     * Runs before the value is changed within an `update` operation.
-     * At this stage, you can be confident that the data that will be saved to the document is valid in accordance to your field validations.
-     *
-     * You can optionally modify the shape of data to be saved or `throw` an error if the data is invalid.
-     * @throws {@link Error} if the data is invalid
+     * Immediately following validation, runs before the value is changed within an `update` operation.
+     * You can optionally modify the shape of data to be saved, useful to auto-generated fields.
      */
     abstract beforeUpdate(value?: unknown): unknown
 }

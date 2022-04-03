@@ -54,11 +54,25 @@ export class Collection {
     }
 
     /**
+     * Runs before the data is updated  within an `insert` operation.
+     * @throws {@link Error} Data is invalid
+     */
+    beforeValidate(data: RawData) {
+        const payload: RawData = { ...data }
+
+        for (const [name, field] of this.schema) {
+            payload[name] = field.beforeValidate(data[name])
+        }
+
+        return payload
+    }
+
+    /**
      * Runs before the data is created within an `insert` operation.
-     * @throws {@link Error} if the data is invalid
+     * @throws {@link Error} Data is invalid
      */
     beforeCreate(data: RawData) {
-        const payload: RawData = { ...data }
+        const payload = this.beforeValidate(data)
 
         for (const [name, field] of this.schema) {
             payload[name] = field.beforeCreate(data[name])
@@ -69,10 +83,10 @@ export class Collection {
 
     /**
      * Runs before the value is changed within an `update` operation.
-     * @throws {@link Error} if the data is invalid
+     * @throws {@link Error} Data is invalid
      */
     beforeUpdate(data: RawData) {
-        const payload: RawData = { ...data }
+        const payload = this.beforeValidate(data)
 
         for (const [name, field] of this.schema) {
             payload[name] = field.beforeUpdate(data[name])

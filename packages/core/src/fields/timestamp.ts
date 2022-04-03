@@ -1,11 +1,14 @@
 import { Field, FieldConfig } from "$/field"
-import { merge } from "lodash"
 
 interface TimestampFieldConfig extends FieldConfig {}
 
 export class TimestampField extends Field<TimestampFieldConfig> {
     constructor(config: TimestampFieldConfig) {
         super(config)
+    }
+
+    beforeValidate(value?: unknown): unknown {
+        return value
     }
 
     beforeCreate(): unknown {
@@ -22,6 +25,9 @@ export class TimestampField extends Field<TimestampFieldConfig> {
  * When collection data change on `insert` and `update` operations the field value will be set to the current timestamp at UTC format.
  */
 export function timestamp(config?: TimestampFieldConfig) {
-    const fallback: TimestampFieldConfig = {}
-    return new TimestampField(merge(fallback, config))
+    const fallback: TimestampFieldConfig = {
+        ...config,
+    }
+
+    return new TimestampField(fallback)
 }

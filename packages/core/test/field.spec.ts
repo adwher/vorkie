@@ -7,6 +7,8 @@ import {
     IdentifierField,
     timestamp,
     TimestampField,
+    number,
+    NumberField,
 } from "../dist/index"
 
 describe("Text", () => {
@@ -48,5 +50,19 @@ describe("Timestamp", () => {
 
     it("timestamp() creates TimestampField()", () => {
         expect(timestamp() instanceof TimestampField).toBe(true)
+    })
+})
+
+describe("Number", () => {
+    it("number()", () => {
+        expect(typeof number).toBe("function")
+    })
+
+    it("new NumberField()", () => {
+        expect(typeof NumberField).toBe("function")
+    })
+
+    it("number() creates NumberField()", () => {
+        expect(number() instanceof NumberField).toBe(true)
     })
 })

@@ -175,7 +175,7 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.all()
     }
 
-    async delete(): Promise<RawData[]> {
+    async remove(): Promise<RawData[]> {
         const statement = this.buildQuery()
         const select = this.buildSelect()
 

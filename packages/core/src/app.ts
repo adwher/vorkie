@@ -92,6 +92,11 @@ interface CreateAppConfig {
     plugins?: Array<Plugin>
 }
 
+/**
+ * Defines a new application instance.
+ * @param config Configuration for the app
+ * @returns An {@link App} instance
+ */
 export function createApp(config: CreateAppConfig) {
     if (config.collections && !Array.isArray(config.collections)) {
         throw new Error("Expected collections to be an array")

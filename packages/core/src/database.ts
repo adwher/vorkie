@@ -56,14 +56,14 @@ export interface QueryBuilder {
 
     /**
      * Inserts data into collection and return inserted field
-     * @throws {@link Error} If the data is invalid
+     * @throws {@link Error} Data is invalid
      * @throws {@link Error} Internal database connector error
      */
     insert(data: Partial<RawData>): Promise<RawData>
 
     /**
      * Updates partial data using the query.
-     * @throws {@link Error} If the data is invalid
+     * @throws {@link Error} Data is invalid
      * @throws {@link Error} Internal database connector error
      */
     update(data: Partial<RawData>): Promise<RawData[]>
@@ -72,5 +72,5 @@ export interface QueryBuilder {
      * Deletes data based on query clauses and return affected data.
      * @throws {@link Error} Internal database connector error
      */
-    delete(): Promise<RawData[]>
+    remove(): Promise<RawData[]>
 }

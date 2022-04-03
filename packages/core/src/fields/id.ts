@@ -1,16 +1,24 @@
 import { Field, FieldConfig } from "$/field"
 import { createIdentifierBySize } from "$/utils/crypto"
-import { merge } from "lodash"
 
-interface IdentifierFieldConfig extends FieldConfig {}
+interface IdentifierFieldConfig extends FieldConfig {
+    /**
+     * The size of the identifier.
+     */
+    size: number
+}
 
 export class IdentifierField extends Field<IdentifierFieldConfig> {
     constructor(config: IdentifierFieldConfig) {
         super(config)
     }
 
+    beforeValidate(value?: unknown): unknown {
+        return value
+    }
+
     beforeCreate() {
-        return createIdentifierBySize(21)
+        return createIdentifierBySize(this.config.size)
     }
 
     beforeUpdate(value?: unknown) {
@@ -18,11 +26,22 @@ export class IdentifierField extends Field<IdentifierFieldConfig> {
     }
 }
 
+interface CreateIdentifierField {
+    /**
+     * The size of the identifier.
+     * @default 12
+     */
+    size?: number
+}
+
 /**
  * Defines a auto-generated ID field.
  * When collection data is insert, the field value will be set using a cryptographically secure random text generator.
  */
-export function id(config?: IdentifierFieldConfig) {
-    const fallback: IdentifierFieldConfig = {}
-    return new IdentifierField(merge(fallback, config))
+export function id(config?: CreateIdentifierField) {
+    const fallback: IdentifierFieldConfig = {
+        size: config?.size ?? 12,
+    }
+
+    return new IdentifierField(fallback)
 }
