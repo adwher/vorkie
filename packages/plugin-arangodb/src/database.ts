@@ -1,5 +1,4 @@
 import { Database as Connector } from "arangojs"
-import { find } from "lodash"
 import { Collection, Database } from "vormik"
 import { ArangoQueryBuilder } from "./query"
 

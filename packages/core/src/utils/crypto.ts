@@ -1,5 +1,8 @@
-import { nanoid } from "nanoid"
+import { customAlphabet } from "nanoid"
 
-export function createIdentifierBySize(size = 21) {
-    return nanoid(size)
+export function createFriendlyID() {
+    const alphabet = "abcdefghijklmnopqrstuvwxyz1234567890"
+    const generator = customAlphabet(alphabet)
+
+    return generator(21)
 }

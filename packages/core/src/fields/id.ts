@@ -1,12 +1,7 @@
 import { Field, FieldConfig } from "$/field"
-import { createIdentifierBySize } from "$/utils/crypto"
+import { createFriendlyID } from "$/utils/crypto"
 
-interface IdentifierFieldConfig extends FieldConfig {
-    /**
-     * The size of the identifier.
-     */
-    size: number
-}
+interface IdentifierFieldConfig extends FieldConfig {}
 
 export class IdentifierField extends Field<IdentifierFieldConfig> {
     constructor(config: IdentifierFieldConfig) {
@@ -18,7 +13,7 @@ export class IdentifierField extends Field<IdentifierFieldConfig> {
     }
 
     beforeCreate() {
-        return createIdentifierBySize(this.config.size)
+        return createFriendlyID()
     }
 
     beforeUpdate(value?: unknown) {
@@ -26,13 +21,7 @@ export class IdentifierField extends Field<IdentifierFieldConfig> {
     }
 }
 
-interface CreateIdentifierField {
-    /**
-     * The size of the identifier.
-     * @default 12
-     */
-    size?: number
-}
+interface CreateIdentifierField {}
 
 /**
  * Defines a auto-generated ID field.
@@ -40,7 +29,7 @@ interface CreateIdentifierField {
  */
 export function id(config?: CreateIdentifierField) {
     const fallback: IdentifierFieldConfig = {
-        size: config?.size ?? 12,
+        ...config,
     }
 
     return new IdentifierField(fallback)
