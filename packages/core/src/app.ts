@@ -35,7 +35,7 @@ export class App {
         this.plugins = config.plugins
 
         for (const plugin of config.plugins) {
-            config = plugin.beforeCreated(config)
+            config = plugin.beforeCreated?.(config) ?? config
         }
 
         this.collections = config.collections
@@ -57,7 +57,7 @@ export class App {
         }
 
         for (const plugin of this.plugins) {
-            await plugin.beforeMount?.()
+            await plugin.beforeMount?.(this)
         }
     }
 
@@ -70,7 +70,7 @@ export class App {
 
     protected async beforeUnmount() {
         for (const plugin of this.plugins) {
-            await plugin.beforeUnmount?.()
+            await plugin.beforeUnmount?.(this)
         }
     }
 

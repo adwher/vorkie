@@ -8,7 +8,7 @@ export type Request = http.IncomingMessage & {
     query?: Record<string, unknown>
 }
 
-export type Response = http.ServerResponse
+export type Response = http.ServerResponse & {}
 
 export type Server = polka.Polka
 export type Middleware = (req: Request, res: Response, next: polka.Next) => void
