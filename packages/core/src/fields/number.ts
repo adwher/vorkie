@@ -1,4 +1,4 @@
-import { Field, FieldConfig } from "$/field"
+import { Field, FieldConfig } from "../field"
 
 interface NumberFieldConfig extends FieldConfig {
     /** The minimum value allowed for this field. */

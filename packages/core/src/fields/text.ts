@@ -1,4 +1,4 @@
-import { Field, FieldConfig } from "$/field"
+import { Field, FieldConfig } from "../field"
 
 interface TextFieldConfig extends FieldConfig {
     /** The minimum length allowed for this field. */

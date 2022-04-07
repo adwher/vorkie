@@ -1,4 +1,4 @@
-import { Field, FieldConfig } from "$/field"
+import { Field, FieldConfig } from "../field"
 
 interface TimestampFieldConfig extends FieldConfig {}
 

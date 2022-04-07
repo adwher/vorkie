@@ -1,4 +1,4 @@
-import { Collection } from "$/collection"
+import { Collection } from "./collection"
 
 export type RawData = Record<string, unknown>
 

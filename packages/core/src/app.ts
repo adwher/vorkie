@@ -4,12 +4,12 @@ import {
     Middleware,
     createServer,
     startServer,
-} from "$/server"
+} from "./server"
 
-import { Collection } from "$/collection"
-import { Database } from "$/database"
-import { Logger, LoggerConfig, LoggerLevel, createLogger } from "$/logger"
-import { Plugin } from "$/plugins"
+import { Collection } from "./collection"
+import { Database } from "./database"
+import { Logger, LoggerConfig, LoggerLevel, createLogger } from "./logger"
+import { Plugin } from "./plugins"
 
 export interface AppConfig {
     server: ServerConfig

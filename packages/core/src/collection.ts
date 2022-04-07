@@ -1,5 +1,5 @@
-import { Field, FieldConfig } from "$/field"
-import { RawData } from "$/database"
+import { Field, FieldConfig } from "./field"
+import { RawData } from "./database"
 import { entries } from "lodash"
 
 interface CollectionConfig {

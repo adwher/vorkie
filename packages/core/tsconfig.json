@@ -4,10 +4,7 @@
         "module": "CommonJS",
         "outDir": "./dist",
         "target": "ES2018",
-        "rootDir": "./src",
-        "paths": {
-            "$/*": ["./src/*"]
-        }
+        "rootDir": "./src"
     },
     "extends": "tsconfig/base.json",
     "include": ["src/**/*.ts"]
