@@ -16,8 +16,8 @@
         "url": "git://github.com/adwher/vormik.git"
     },
     "scripts": {
-        "dev": "turbo run dev --parallel",
-        "build": "turbo run build --parallel",
+        "dev": "turbo run dev --filter=vormik* --parallel",
+        "build": "turbo run build --filter=vormik*",
         "test": "turbo run test"
     },
     "workspaces": [
@@ -26,6 +26,6 @@
     ],
     "devDependencies": {
         "prettier": "^2.6.0",
-        "turbo": "^1.1.9"
+        "turbo": "^1.2.1"
     }
 }

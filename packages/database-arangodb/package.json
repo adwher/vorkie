@@ -1,5 +1,5 @@
 {
-    "name": "vormik-plugin-arangodb",
+    "name": "vormik-database-arangodb",
     "version": "0.1.0",
     "sideEffects": false,
     "main": "dist/index.js",
@@ -11,17 +11,14 @@
     },
     "dependencies": {
         "arangojs": "^7.7.0",
-        "lodash": "^4.17.21"
+        "lodash": "^4.17.21",
+        "vormik": "*"
     },
     "devDependencies": {
         "@types/lodash": "^4.14.180",
         "@types/node": "^17.0.21",
-        "tsconfig": "*",
         "tsup": "^5.12.4",
         "typescript": "^4.6.2",
         "vitest": "^0.7.6"
-    },
-    "peerDependencies": {
-        "vormik": "*"
     }
 }
