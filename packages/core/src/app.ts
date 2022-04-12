@@ -11,20 +11,22 @@ import { Database } from "./database"
 import { Logger, LoggerConfig, LoggerLevel, createLogger } from "./logger"
 import { Plugin } from "./plugins"
 
+import { mapKeys, entries } from "lodash"
+
 export interface AppConfig {
     server: ServerConfig
-    collections: Set<Collection>
+    collections: Map<string, Collection>
     database: Database
     logger: LoggerConfig
-    plugins: Set<Plugin>
+    plugins: Map<string, Plugin>
 }
 
 export class App {
     protected readonly server: Server
-    protected readonly plugins: Set<Plugin>
+    protected readonly plugins: Map<string, Plugin>
     protected readonly config: AppConfig
 
-    public readonly collections: Set<Collection>
+    public readonly collections: Map<string, Collection>
     public readonly database: Database
     public readonly logger: Logger
 
@@ -34,7 +36,7 @@ export class App {
         this.database = config.database
         this.plugins = config.plugins
 
-        for (const plugin of config.plugins) {
+        for (const [name, plugin] of config.plugins) {
             config = plugin.beforeCreated?.(config) ?? config
         }
 
@@ -52,11 +54,13 @@ export class App {
     }
 
     protected async beforeMount() {
-        for (const collection of this.collections) {
+        for (const [name, collection] of this.collections) {
+            this.logger.debug(`Migrating "${name}" collection`)
             await this.database.migrate(collection)
         }
 
-        for (const plugin of this.plugins) {
+        for (const [name, plugin] of this.plugins) {
+            this.logger.debug(`Mounting "${name}" plugin`)
             await plugin.beforeMount?.(this)
         }
     }
@@ -65,11 +69,13 @@ export class App {
         await this.beforeMount()
         await startServer(this.server, this.config.server)
 
+        this.logger.debug("Server was mounted")
         this.mounted = true
     }
 
     protected async beforeUnmount() {
-        for (const plugin of this.plugins) {
+        for (const [name, plugin] of this.plugins) {
+            this.logger.debug(`Unmounting "${name}" plugin`)
             await plugin.beforeUnmount?.(this)
         }
     }
@@ -77,17 +83,32 @@ export class App {
     public async close() {
         await this.beforeUnmount()
 
+        this.logger.debug("Server was unmounted")
         this.mounted = false
     }
 
+    /**
+     * Defines a usage of server middleware.
+     * @see https://github.com/lukeed/trouter#handlers
+     */
     public use(fn: Middleware) {
         this.server.use(fn)
+    }
+
+    /**
+     * Defines server a middleware in a expecific route.
+     * The URL must match the defined pattern exactly or have the appropriate optional and/or wildcard segments.
+     * @see https://github.com/lukeed/trouter#trouterallpattern-handlers
+     */
+    public at(path: string, fn: Middleware) {
+        this.server.all(path, fn)
     }
 }
 
 interface CreateAppConfig {
     collections?: Array<Collection>
     server?: ServerConfig
+    logger?: LoggerConfig
     database: Database
     plugins?: Array<Plugin>
 }
@@ -106,6 +127,9 @@ export function createApp(config: CreateAppConfig) {
         throw new Error("No database provided")
     }
 
+    const collections = mapKeys(config.collections ?? [], c => c.name)
+    const plugins = mapKeys(config.plugins ?? [], p => p.name)
+
     const fallback: AppConfig = {
         server: {
             host: "localhost",
@@ -116,12 +140,13 @@ export function createApp(config: CreateAppConfig) {
 
         logger: {
             thresh: LoggerLevel.INFO,
+            ...config.logger,
         },
 
         database: config.database,
 
-        collections: new Set(config.collections),
-        plugins: new Set(config.plugins),
+        collections: new Map(entries(collections)),
+        plugins: new Map(entries(plugins)),
     }
 
     return new App(fallback)

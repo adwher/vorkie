@@ -1,13 +1,18 @@
-import { green, red, blue, yellow, gray } from "colorette"
+import { green, red, cyan, yellow, gray, dim } from "colorette"
 
 export enum LoggerLevel {
     SILENT,
     ERROR,
     WARNING,
     INFO,
+    DEBUG,
 }
 
 export interface LoggerConfig {
+    /**
+     * Defines the threshold of logs in range `0-4`.
+     * You can use {@link LoggerLevel} enum to define the threshold.
+     */
     thresh: LoggerLevel
 }
 
@@ -18,9 +23,15 @@ export class Logger {
         this.thresh = config.thresh
     }
 
+    public debug(message: string) {
+        if (this.thresh >= LoggerLevel.DEBUG) {
+            console.log(gray("debug") + ` ${message}`)
+        }
+    }
+
     public info(message: string) {
         if (this.thresh >= LoggerLevel.INFO) {
-            console.log(blue("info") + ` ${message}`)
+            console.log(cyan("info") + ` ${message}`)
         }
     }
 
@@ -44,17 +55,13 @@ export class Logger {
 
             if (payload instanceof Error) {
                 console.log()
-                console.log(gray(payload.stack as string))
+                console.log(dim(payload.stack as string))
                 console.log()
             }
         }
     }
 }
 
-interface CreateLoggerConfig {
-    thresh: LoggerLevel
-}
-
-export function createLogger(config: CreateLoggerConfig) {
+export function createLogger(config: LoggerConfig) {
     return new Logger(config)
 }

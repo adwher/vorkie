@@ -6,6 +6,7 @@ import { json as jsonMiddleware } from "body-parser"
 export type Request = http.IncomingMessage & {
     originalUrl?: string
     query?: Record<string, unknown>
+    params: Record<string, string>
 }
 
 export type Response = http.ServerResponse & {}

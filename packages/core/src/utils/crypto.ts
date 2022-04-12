@@ -1,8 +1,8 @@
 import { customAlphabet } from "nanoid"
 
 export function createFriendlyID() {
-    const alphabet = "abcdefghijklmnopqrstuvwxyz1234567890"
+    const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
     const generator = customAlphabet(alphabet)
 
-    return generator(21)
+    return generator(26)
 }
