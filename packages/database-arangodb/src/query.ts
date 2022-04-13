@@ -1,8 +1,6 @@
 import { Collection, RawData, QueryBuilder, QueryWhereOperator } from "vormik"
 import { Database as Connector } from "arangojs"
 
-import _ from "lodash"
-
 interface Sort {
     field: string
     direction: "asc" | "desc"

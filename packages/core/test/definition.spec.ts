@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest"
-
-import { createApp, App, createCollection, Collection } from "../dist/index"
+import { createApp, App, createCollection, Collection } from "../dist"
 
 describe("App", () => {
     it("createApp()", () => {

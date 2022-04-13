@@ -10,8 +10,8 @@
             "outputs": ["dist/**"]
         },
         "test": {
-            "dependsOn": ["build"],
-            "outputs": []
+            "dependsOn": ["^build"],
+            "outputs": [""]
         }
     }
 }

@@ -1,5 +1,5 @@
 import { Field, FieldConfig } from "../field"
-import { createFriendlyID } from "../utils/crypto"
+import { createFriendlyID } from "../utils"
 
 interface IdentifierFieldConfig extends FieldConfig {}
 

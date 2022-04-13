@@ -11,7 +11,7 @@ import { Database } from "./database"
 import { Logger, LoggerConfig, LoggerLevel, createLogger } from "./logger"
 import { Plugin } from "./plugins"
 
-import { mapKeys, entries } from "lodash"
+import { mapper } from "./utils"
 
 export interface AppConfig {
     server: ServerConfig
@@ -127,8 +127,8 @@ export function createApp(config: CreateAppConfig) {
         throw new Error("No database provided")
     }
 
-    const collections = mapKeys(config.collections ?? [], c => c.name)
-    const plugins = mapKeys(config.plugins ?? [], p => p.name)
+    const collections = mapper(config.collections ?? [], "name")
+    const plugins = mapper(config.plugins ?? [], "name")
 
     const fallback: AppConfig = {
         server: {
@@ -145,8 +145,8 @@ export function createApp(config: CreateAppConfig) {
 
         database: config.database,
 
-        collections: new Map(entries(collections)),
-        plugins: new Map(entries(plugins)),
+        collections: collections,
+        plugins: plugins,
     }
 
     return new App(fallback)

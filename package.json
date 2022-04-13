@@ -17,7 +17,7 @@
     },
     "scripts": {
         "dev": "turbo run dev --filter=vormik* --parallel",
-        "build": "turbo run build --filter=vormik*",
+        "build": "turbo run build",
         "test": "turbo run test"
     },
     "workspaces": [
