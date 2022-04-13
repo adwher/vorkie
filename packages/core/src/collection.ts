@@ -1,8 +1,81 @@
 import { Field, FieldConfig } from "./field"
 import { RawData } from "./database"
-import { entries } from "lodash"
+
+type Schema = Map<string, Field<FieldConfig>>
 
 interface CollectionConfig {
+    name: string
+    description?: string
+    identifier: string
+    schema: Schema
+    private?: boolean
+}
+
+export class Collection {
+    public readonly name: string
+    public readonly schema: Schema
+
+    constructor(protected readonly config: CollectionConfig) {
+        this.name = config.name
+        this.schema = config.schema
+    }
+
+    /** Adds fields to the collections, useful to plugins and extensions. */
+    public addField<C>(name: string, field: Field<C>) {
+        this.schema.set(name, field)
+        return this
+    }
+
+    public getConfig() {
+        return this.config
+    }
+
+    /**
+     * Runs before the data is changed within an `insert` or `update` operation.
+     * @throws {@link Error} Data is invalid
+     */
+    public beforeValidate(data: RawData) {
+        const payload: RawData = { ...data }
+
+        for (const [name, field] of this.schema) {
+            payload[name] = field.beforeValidate(data[name])
+        }
+
+        return payload
+    }
+
+    /**
+     * Runs before the data is created within an `insert` operation.
+     * @throws {@link Error} Data is invalid
+     */
+    public beforeCreate(data: RawData) {
+        const payload = this.beforeValidate(data)
+
+        for (const [name, field] of this.schema) {
+            payload[name] = field.beforeCreate(data[name])
+        }
+
+        return payload
+    }
+
+    /**
+     * Runs before the value is changed within an `update` operation.
+     * @throws {@link Error} Data is invalid
+     */
+    public beforeUpdate(data: RawData) {
+        const payload = this.beforeValidate(data)
+
+        for (const [name, field] of this.schema) {
+            payload[name] = field.beforeUpdate(data[name])
+        }
+
+        return payload
+    }
+}
+
+type CreateSchema = Record<string, Field<FieldConfig>>
+
+interface CreateCollectionConfig<S extends CreateSchema> {
     /**
      * Plural collection name.
      *
@@ -19,81 +92,11 @@ interface CollectionConfig {
     /** Define a description to the collection. */
     description?: string
 
+    /** Defines unique the field value who identify each document. */
+    identifier: keyof S
+
     /** Describe the fields used by the collection. */
-    schema: Record<string, Field<FieldConfig>>
-
-    /** Sets the collections as private and their use will be restricted to internal-only. */
-    private?: boolean
-}
-
-export class Collection {
-    public readonly name: string
-    public readonly schema: Map<string, Field<FieldConfig>>
-
-    constructor(protected readonly config: CollectionConfig) {
-        this.name = config.name
-        this.schema = new Map(entries(config.schema))
-    }
-
-    /** Creates a private {@link Collection} instance from their config. */
-    public static from(config: CollectionConfig) {
-        return new Collection({
-            ...config,
-            private: true,
-        })
-    }
-
-    public isPrivate() {
-        return this.config.private ?? false
-    }
-
-    /** Adds fields to the collections, useful to plugins and extensions. */
-    public addField<C>(name: string, field: Field<C>) {
-        this.schema.set(name, field)
-        return this
-    }
-
-    /**
-     * Runs before the data is updated  within an `insert` operation.
-     * @throws {@link Error} Data is invalid
-     */
-    beforeValidate(data: RawData) {
-        const payload: RawData = { ...data }
-
-        for (const [name, field] of this.schema) {
-            payload[name] = field.beforeValidate(data[name])
-        }
-
-        return payload
-    }
-
-    /**
-     * Runs before the data is created within an `insert` operation.
-     * @throws {@link Error} Data is invalid
-     */
-    beforeCreate(data: RawData) {
-        const payload = this.beforeValidate(data)
-
-        for (const [name, field] of this.schema) {
-            payload[name] = field.beforeCreate(data[name])
-        }
-
-        return payload
-    }
-
-    /**
-     * Runs before the value is changed within an `update` operation.
-     * @throws {@link Error} Data is invalid
-     */
-    beforeUpdate(data: RawData) {
-        const payload = this.beforeValidate(data)
-
-        for (const [name, field] of this.schema) {
-            payload[name] = field.beforeUpdate(data[name])
-        }
-
-        return payload
-    }
+    schema: S
 }
 
 /**
@@ -103,14 +106,29 @@ export class Collection {
  * const User = createCollection({
  *  name: "users",
  *  description: "A simple user",
+ *  identifier: "id",
  *  schema: {
+ *      id: id(),
  *      firstname: text(),
  *      lastname: text(),
+ *  },
  * })
  * ```
  *
  * @param config Configuration for the collection
  */
-export function createCollection(config: CollectionConfig): Collection {
-    return new Collection(config)
+export function createCollection<S extends CreateSchema>(
+    config: CreateCollectionConfig<S>
+) {
+    const schema = new Map(Object.entries(config.schema))
+
+    const fallback: CollectionConfig = {
+        ...config,
+
+        private: false,
+        schema: schema,
+        identifier: config.identifier as string,
+    }
+
+    return new Collection(fallback)
 }

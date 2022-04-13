@@ -4,7 +4,7 @@ export interface Plugin {
     /** Sets a unique identifier for the plugin. */
     name: string
 
-    /** Allows to describe what plugin do. */
+    /** Allows to describe what your plugin do. */
     description?: string
 
     /** Defines a function that is executed before the application is created and can update its configuration. */

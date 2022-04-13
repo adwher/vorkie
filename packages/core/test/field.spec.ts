@@ -9,7 +9,9 @@ import {
     TimestampField,
     number,
     NumberField,
-} from "../dist/index"
+    checkbox,
+    CheckboxField,
+} from "../dist"
 
 describe("Text", () => {
     it("text()", () => {
@@ -64,5 +66,19 @@ describe("Number", () => {
 
     it("number() creates NumberField()", () => {
         expect(number() instanceof NumberField).toBe(true)
+    })
+})
+
+describe("Checkbox", () => {
+    it("checkbox()", () => {
+        expect(typeof checkbox).toBe("function")
+    })
+
+    it("new CheckboxField()", () => {
+        expect(typeof CheckboxField).toBe("function")
+    })
+
+    it("checkbox() creates CheckboxField()", () => {
+        expect(checkbox() instanceof CheckboxField).toBe(true)
     })
 })
