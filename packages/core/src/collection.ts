@@ -92,7 +92,7 @@ interface CreateCollectionConfig<S extends CreateSchema> {
     /** Define a description to the collection. */
     description?: string
 
-    /** Defines unique the field value who identify each document. */
+    /** Defines the unique field value who identify each document. */
     identifier: keyof S
 
     /** Describe the fields used by the collection. */

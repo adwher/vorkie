@@ -6,6 +6,11 @@ export interface FieldConfig {
 export abstract class Field<C extends FieldConfig> {
     constructor(protected readonly config: C) {}
 
+    /** Returns field config based on type of instance. */
+    public getConfig() {
+        return this.config
+    }
+
     /**
      * Runs before operations for cheking that it conforms to certain rules.
      * You can optionally modify the shape of data to be saved or `throw` an error if the data is invalid.

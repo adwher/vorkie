@@ -25,7 +25,7 @@ interface CreateIdentifierField {}
 
 /**
  * Defines a auto-generated ID field.
- * When collection data is insert, the field value will be set using a cryptographically secure random text generator.
+ * When document will be inserted, the field value will be set using a anti-collision random text generator.
  */
 export function id(config?: CreateIdentifierField) {
     const fallback: IdentifierFieldConfig = {

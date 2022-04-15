@@ -1,18 +1,36 @@
-import polka from "polka"
-import http from "http"
-
+import { IncomingMessage, ServerResponse } from "http"
 import { json as jsonMiddleware } from "body-parser"
 
-export type Request = http.IncomingMessage & {
-    originalUrl?: string
-    query?: Record<string, unknown>
+import polka from "polka"
+
+/** An {@link IncomingMessage} extension. */
+export type Request = IncomingMessage & {
+    /** The originally-requested URL, including parent router segments. */
+    originalUrl: string
+
+    /** The parsed query string. */
+    query: Record<string, unknown>
+
+    /** The unparsed query string from URL. */
+    search?: string
+
+    /** The values of named parameters within your route pattern. */
     params: Record<string, string>
+
+    /** The parse request body. */
+    body: Record<string, unknown>
 }
 
-export type Response = http.ServerResponse & {}
+/** It is passed as the second parameter to the `request` event and allows to send a HTTP response. */
+export type Response = ServerResponse & {}
+
+/** Calls the next middleware function in the chain, or throws an error. */
+export type FnNext = (err?: string | Error) => void
+
+/** An simple server middleware. */
+export type Middleware = (req: Request, res: Response, next: FnNext) => void
 
 export type Server = polka.Polka
-export type Middleware = (req: Request, res: Response, next: polka.Next) => void
 
 export interface ServerConfig {
     host?: string
