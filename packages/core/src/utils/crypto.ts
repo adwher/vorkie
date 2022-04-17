@@ -1,12 +1,12 @@
 import { customAlphabet } from "nanoid"
 
 /**
- * Generates a URL-friendly and anti-collision ID with 24 random characters.
- * @example `T219EDPAC84FJ991C6DNP11E`
+ * Generates a URL-friendly and anti-collision ID with 21 random characters.
+ * @example `CNJBTJELS8AQ2CPR7P1WJ`
  */
 export function createFriendlyID() {
-    const alphabet = "123456789ABCDEFGHJKLMNOPQRSTWXYZ"
+    const alphabet = "123456789ABCDEFGHJKLMNOPQRSTWYZ"
     const generate = customAlphabet(alphabet)
 
-    return generate(24)
+    return generate(21)
 }

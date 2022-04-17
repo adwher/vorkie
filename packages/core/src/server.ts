@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http"
-import { json as jsonMiddleware } from "body-parser"
+import { json } from "body-parser"
 
 import polka from "polka"
 
@@ -22,19 +22,33 @@ export type Request = IncomingMessage & {
 }
 
 /** It is passed as the second parameter to the `request` event and allows to send a HTTP response. */
-export type Response = ServerResponse & {}
+export type Response = ServerResponse & {
+    /** Sets the status code and chain the response. */
+    status(code: number): Response
 
-/** Calls the next middleware function in the chain, or throws an error. */
+    /** Send a JSON response. */
+    send(data: object): void
+}
+
+/**
+ * Calls the next middleware function in the chain, or throws an error.
+ * @param err The error to throw.
+ */
 export type FnNext = (err?: string | Error) => void
 
-/** An simple server middleware. */
+/**
+ * An simple server middleware.
+ * @param req The incoming request.
+ * @param res The outgoing response.
+ * @param next The next middleware function in the chain.
+ */
 export type Middleware = (req: Request, res: Response, next: FnNext) => void
 
 export type Server = polka.Polka
 
 export interface ServerConfig {
     host?: string
-    port?: number
+    port: number
 
     bodyLimit?: `${number}${"b" | "kb" | "mb" | "gb"}`
 }
@@ -42,13 +56,10 @@ export interface ServerConfig {
 export function createServer(config: ServerConfig): Server {
     const server = polka()
 
-    server.use(
-        jsonMiddleware({
-            limit: config.bodyLimit,
-        })
-    )
-
     server.get("/_ping", ping())
+
+    server.use(json({ limit: config.bodyLimit }))
+    server.use(utils())
 
     return server
 }
@@ -57,9 +68,27 @@ export async function startServer(server: Server, config: ServerConfig) {
     server.listen(config.port, config.host)
 }
 
+function utils(): Middleware {
+    return (req, res, next) => {
+        res.send = (data: unknown) => {
+            res.setHeader("x-powered-by", "vormik")
+            res.setHeader("content-type", "application/json")
+
+            return res.end(JSON.stringify(data))
+        }
+
+        res.status = (code: number) => {
+            res.statusCode = code
+            return res
+        }
+
+        next()
+    }
+}
+
 function ping(): Middleware {
     return async (req, res) => {
-        res.setHeader("X-Powered-By", "Vormik")
+        res.setHeader("x-powered-by", "vormik")
         res.end("_pong")
     }
 }
