@@ -8,16 +8,16 @@ export class IdentifierField extends Field<IdentifierFieldConfig> {
         super(config)
     }
 
-    beforeValidate(value?: unknown): unknown {
-        return value
+    validate(value: unknown) {
+        return undefined
     }
 
     beforeCreate() {
         return createFriendlyID()
     }
 
-    beforeUpdate(value?: unknown) {
-        if (value) throw new Error("An id cannot be updated")
+    beforeUpdate(newest: unknown, oldest: unknown) {
+        return oldest
     }
 }
 

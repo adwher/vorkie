@@ -1,4 +1,4 @@
-import { Field, FieldConfig } from "../field"
+import { Field, FieldConfig, FieldDataError } from "../field"
 
 interface NumberFieldConfig extends FieldConfig {
     /** The minimum value allowed for this field. */
@@ -13,32 +13,37 @@ export class NumberField extends Field<NumberFieldConfig> {
         super(config)
     }
 
-    beforeValidate(value?: unknown): unknown {
-        if (value === undefined) return value
+    validate(value: unknown) {
+        if (value === undefined) return
 
         if (typeof value !== "number") {
-            return new Error("An number field must be a number")
+            return new FieldDataError({
+                code: "invalid_type",
+                message: `Expected number, received ${typeof value}`,
+            })
         }
 
         if (this.config.min && value < this.config.min) {
-            return new Error(
-                `Number '${value}' must be greater than ${this.config.min}`
-            )
+            return new FieldDataError({
+                code: "too_small",
+                message: `Number must be greater than ${this.config.min}`,
+            })
         }
 
         if (this.config.max && value > this.config.max) {
-            return new Error(
-                `Number '${value}' must be less than ${this.config.max}`
-            )
+            return new FieldDataError({
+                code: "too_big",
+                message: `Number must be less than ${this.config.max}`,
+            })
         }
     }
 
-    beforeCreate(value?: unknown): unknown {
+    beforeCreate(value: unknown): unknown {
         return value
     }
 
-    beforeUpdate(value?: unknown): unknown {
-        return value
+    beforeUpdate(newest: unknown): unknown {
+        return newest
     }
 }
 

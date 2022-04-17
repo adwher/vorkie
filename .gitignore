@@ -45,3 +45,4 @@ build
 .turbo
 .cache
 .vormik
+*.tsno.*

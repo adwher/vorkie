@@ -1,4 +1,4 @@
-import { Field, FieldConfig } from "./field"
+import { Field, FieldConfig, FieldDataError } from "./field"
 import { RawData } from "./database"
 
 type Schema = Map<string, Field<FieldConfig>>
@@ -9,6 +9,10 @@ interface CollectionConfig {
     identifier: string
     schema: Schema
     private?: boolean
+}
+
+export class CollectionDataError {
+    constructor(public issues: FieldDataError[]) {}
 }
 
 export class Collection {
@@ -26,50 +30,55 @@ export class Collection {
         return this
     }
 
+    /** @returns Collection's config. */
     public getConfig() {
         return this.config
     }
 
     /**
-     * Runs before the data is changed within an `insert` or `update` operation.
-     * @throws {@link Error} Data is invalid
+     * Verifies that the data is valid according to the collection schema.
+     * @returns `undefined` if the data is valid, otherwise returns an detailed error.
      */
-    public beforeValidate(data: RawData) {
-        const payload: RawData = { ...data }
+    public validate(data: RawData) {
+        const errors: FieldDataError[] = []
 
         for (const [name, field] of this.schema) {
-            payload[name] = field.beforeValidate(data[name])
+            const error = field.validate(data[name])
+
+            if (error instanceof FieldDataError) {
+                error.path.push(name)
+                errors.push(error)
+            }
         }
 
-        return payload
+        if (errors.length > 0) {
+            return new CollectionDataError(errors)
+        }
     }
 
     /**
      * Runs before the data is created within an `insert` operation.
-     * @throws {@link Error} Data is invalid
+     * @returns The data to be saved.
      */
     public beforeCreate(data: RawData) {
-        const payload = this.beforeValidate(data)
-
         for (const [name, field] of this.schema) {
-            payload[name] = field.beforeCreate(data[name])
+            data[name] = field.beforeCreate(data[name])
         }
 
-        return payload
+        return data
     }
 
     /**
      * Runs before the value is changed within an `update` operation.
-     * @throws {@link Error} Data is invalid
+     * Also merge the new data with the existing data.
+     * @returns The data to be saved.
      */
-    public beforeUpdate(data: RawData) {
-        const payload = this.beforeValidate(data)
-
+    public beforeUpdate(newest: RawData, oldest: RawData) {
         for (const [name, field] of this.schema) {
-            payload[name] = field.beforeUpdate(data[name])
+            newest[name] = field.beforeUpdate(newest[name], oldest[name])
         }
 
-        return payload
+        return newest
     }
 }
 

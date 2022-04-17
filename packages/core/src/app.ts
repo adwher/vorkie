@@ -66,10 +66,12 @@ export class App {
     }
 
     public async start() {
+        const url = `http://${this.config.server.host}:${this.config.server.port}`
+
         await this.beforeMount()
         await startServer(this.server, this.config.server)
 
-        this.logger.debug("Server was mounted")
+        this.logger.info(`Server was mounted at ${url}`)
         this.mounted = true
     }
 

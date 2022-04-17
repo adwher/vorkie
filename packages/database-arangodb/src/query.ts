@@ -147,6 +147,9 @@ export class ArangoQueryBuilder implements QueryBuilder {
 
     async insert(data: Partial<RawData>): Promise<RawData> {
         const payload = this.collection.beforeCreate(data)
+        const err = this.collection.validate(payload)
+
+        if (err) throw err
 
         const query = `
             INSERT ${JSON.stringify(payload)} INTO ${this.from}
@@ -157,15 +160,23 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.next()
     }
 
-    async update(data: Partial<RawData>): Promise<RawData[]> {
+    async update(newest: Partial<RawData>): Promise<RawData[]> {
         const statement = this.buildQuery()
         const select = this.buildSelect("NEW")
-        const payload = this.collection.beforeUpdate(data)
+
+        const oldest = await this.list()
+
+        for (const old of oldest) {
+            const data = this.collection.beforeUpdate(newest, old)
+            const err = this.collection.validate(data)
+
+            if (err) throw err
+        }
 
         const query = `
             FOR doc IN ${this.from}
                 ${statement}
-                UPDATE doc WITH ${JSON.stringify(payload)} IN ${this.from}
+                UPDATE doc WITH ${JSON.stringify(newest)} IN ${this.from}
                 ${select}
         `
 

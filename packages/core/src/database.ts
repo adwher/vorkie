@@ -1,4 +1,4 @@
-import { Collection } from "./collection"
+import { Collection, CollectionDataError } from "./collection"
 
 export type RawData = Record<string, unknown>
 
@@ -6,7 +6,7 @@ export interface Database {
     /**
      * Allows to query the database.
      * @param name A {@link Collection} name to query.
-     * @throws {@link Error} if the collection is not defined.
+     * @throws The collection is not defined.
      * */
     from(name: string): QueryBuilder
 
@@ -38,39 +38,39 @@ export interface QueryBuilder {
 
     /**
      * Executes the query and fetch the count of items.
-     * @throws {@link Error} Internal database connector error
+     * @throws Internal database connector error
      */
     count(): Promise<number>
 
     /**
      * Fetchs the first element in the query result.
-     * @throws {@link Error} Internal database connector error
+     * @throws Internal database connector error
      */
     single(): Promise<RawData | undefined>
 
     /**
      * Fetchs all results into the query.
-     * @throws {@link Error} Internal database connector error
+     * @throws Internal database connector error
      */
     list(): Promise<RawData[]>
 
     /**
-     * Inserts data into collection and return inserted field
-     * @throws {@link Error} Data is invalid
-     * @throws {@link Error} Internal database connector error
+     * Inserts data into collection and return inserted field.
+     * @throws Give {@link CollectionDataError} if the data is not valid.
+     * @throws Internal database connector error
      */
     insert(data: Partial<RawData>): Promise<RawData>
 
     /**
      * Updates partial data using the query.
-     * @throws {@link Error} Data is invalid
-     * @throws {@link Error} Internal database connector error
+     * @throws Give {@link CollectionDataError} if the data is not valid.
+     * @throws Internal database connector error
      */
     update(data: Partial<RawData>): Promise<RawData[]>
 
     /**
      * Deletes data based on query clauses and return affected data.
-     * @throws {@link Error} Internal database connector error
+     * @throws Internal database connector error
      */
     remove(): Promise<RawData[]>
 }

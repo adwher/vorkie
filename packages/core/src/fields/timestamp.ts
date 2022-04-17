@@ -9,16 +9,16 @@ export class TimestampField extends Field<TimestampFieldConfig> {
         super(config)
     }
 
-    beforeValidate(value?: unknown): unknown {
-        return value
+    validate(value: unknown) {
+        return undefined
     }
 
     beforeCreate(): unknown {
         return new Date().toISOString()
     }
 
-    beforeUpdate(value: unknown): unknown {
-        if (this.config.createdOnly) return value
+    beforeUpdate(newest: unknown, oldest: unknown): unknown {
+        if (this.config.createdOnly) return oldest
         else return new Date().toISOString()
     }
 }

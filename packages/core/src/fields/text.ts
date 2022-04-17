@@ -1,4 +1,4 @@
-import { Field, FieldConfig } from "../field"
+import { Field, FieldDataError, FieldConfig } from "../field"
 
 interface TextFieldConfig extends FieldConfig {
     /** The minimum length allowed for this field. */
@@ -13,33 +13,36 @@ export class TextField extends Field<TextFieldConfig> {
         super(config)
     }
 
-    beforeValidate(value?: unknown): unknown {
-        if (value === undefined) return value
+    validate(value: unknown) {
+        if (value === undefined) return
 
         if (typeof value !== "string") {
-            throw new Error("An text field must be a string")
+            return new FieldDataError({
+                code: "invalid_type",
+                message: `Expected string, received ${typeof value}`,
+            })
         }
 
         if (this.config.min && value.length < this.config.min) {
-            throw new Error(
-                `Length of '${value}' must be greater than ${this.config.min}`
-            )
+            return new FieldDataError({
+                code: "too_small",
+                message: `String must contain at least ${this.config.min} character(s)`,
+            })
         }
 
         if (this.config.max && value.length > this.config.max) {
-            throw new Error(
-                `Length of '${value}' must be less than ${this.config.max}`
-            )
+            return new FieldDataError({
+                code: "too_bing",
+                message: `String must contain least than ${this.config.max} character(s)`,
+            })
         }
+    }
 
+    beforeCreate(value: unknown): unknown {
         return value
     }
 
-    beforeCreate(value?: unknown): unknown {
-        return value
-    }
-
-    beforeUpdate(value?: unknown): unknown {
+    beforeUpdate(value: unknown): unknown {
         return value
     }
 }
