@@ -1,6 +1,7 @@
 {
     "name": "vormik",
     "version": "1.0.0",
+    "description": "Typescript based server + Micro CMS",
     "sideEffects": false,
     "type": "commonjs",
     "main": "dist/index.js",

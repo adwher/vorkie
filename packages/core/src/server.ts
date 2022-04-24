@@ -1,7 +1,7 @@
-import { IncomingMessage, ServerResponse } from "http"
-import { json } from "body-parser"
-
 import polka from "polka"
+
+import { IncomingMessage, ServerResponse } from "http"
+import { json, urlencoded } from "body-parser"
 
 /** An {@link IncomingMessage} extension. */
 export type Request = IncomingMessage & {
@@ -17,14 +17,14 @@ export type Request = IncomingMessage & {
     /** The values of named parameters within your route pattern. */
     params: Record<string, string>
 
-    /** The parse request body. */
-    body: Record<string, unknown>
+    /** The parsed body of the request. */
+    body?: unknown
 }
 
 /** It is passed as the second parameter to the `request` event and allows to send a HTTP response. */
 export type Response = ServerResponse & {
     /** Sets the status code and chain the response. */
-    status(code: number): Response
+    status(code: number): void
 
     /** Send a JSON response. */
     send(data: object): void
@@ -58,8 +58,9 @@ export function createServer(config: ServerConfig): Server {
 
     server.get("/_ping", ping())
 
-    server.use(json({ limit: config.bodyLimit }))
     server.use(utils())
+    server.use(json({ limit: config.bodyLimit }))
+    server.use(urlencoded({ limit: config.bodyLimit }))
 
     return server
 }
@@ -79,7 +80,6 @@ function utils(): Middleware {
 
         res.status = (code: number) => {
             res.statusCode = code
-            return res
         }
 
         next()

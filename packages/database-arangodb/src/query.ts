@@ -117,7 +117,7 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return Number(count)
     }
 
-    async single(): Promise<RawData | undefined> {
+    async single() {
         const statement = this.buildQuery()
         const select = this.buildSelect()
 
@@ -131,7 +131,7 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.next()
     }
 
-    async list(): Promise<RawData[]> {
+    async list() {
         const statement = this.buildQuery()
         const select = this.buildSelect()
 
@@ -145,7 +145,7 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.all()
     }
 
-    async insert(data: Partial<RawData>): Promise<RawData> {
+    async insert(data: Partial<RawData>) {
         const payload = this.collection.beforeCreate(data)
         const err = this.collection.validate(payload)
 
@@ -160,7 +160,7 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.next()
     }
 
-    async update(newest: Partial<RawData>): Promise<RawData[]> {
+    async update(newest: Partial<RawData>) {
         const statement = this.buildQuery()
         const select = this.buildSelect("NEW")
 
@@ -184,7 +184,7 @@ export class ArangoQueryBuilder implements QueryBuilder {
         return await result.all()
     }
 
-    async remove(): Promise<RawData[]> {
+    async remove() {
         const statement = this.buildQuery()
         const select = this.buildSelect()
 
