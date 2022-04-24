@@ -1,5 +1,6 @@
 export { createApp, App } from "./app"
-export { createCollection, Collection } from "./collection"
+export { createCollection, Collection, CollectionDataError } from "./collection"
+export { Field, FieldDataError } from "./field"
 
 export type { Plugin } from "./plugins"
 export type { Request, Response, Middleware } from "./server"
@@ -11,9 +12,6 @@ export type {
     QueryWhereOperator,
 } from "./database"
 
-// Fields
-
-export { Field } from "./field"
 export type { FieldConfig } from "./field"
 
 export * from "./fields"

@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "lib": ["ES2017"],
+        "module": "CommonJS",
+        "target": "ES2018",
+        "outDir": "./dist",
+        "rootDir": "./src"
+    },
+    "extends": "shared/tsconfig/base.json",
+    "include": ["src/**/*.ts"]
+}

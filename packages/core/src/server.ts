@@ -60,7 +60,7 @@ export function createServer(config: ServerConfig): Server {
 
     server.use(utils())
     server.use(json({ limit: config.bodyLimit }))
-    server.use(urlencoded({ limit: config.bodyLimit }))
+    server.use(urlencoded({ extended: true, limit: config.bodyLimit }))
 
     return server
 }
