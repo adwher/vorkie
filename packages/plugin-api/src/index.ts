@@ -1,4 +1,4 @@
-import { Plugin } from "vormik"
+import { Plugin } from "vorkie"
 import { createRouter } from "./api"
 
 export function createAPI(): Plugin {

@@ -1,5 +1,5 @@
 {
-    "name": "vormik-database-arangodb",
+    "name": "vorkie-database-arangodb",
     "version": "1.0.0",
     "sideEffects": false,
     "main": "dist/index.js",
@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "arangojs": "^7.7.0",
-        "vormik": "*"
+        "vorkie": "*"
     },
     "devDependencies": {
         "@types/node": "^17.0.21",

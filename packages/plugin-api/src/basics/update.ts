@@ -5,7 +5,7 @@ import {
     RawData,
     Request,
     Response,
-} from "vormik"
+} from "vorkie"
 
 export async function handleUpdateByID(
     req: Request,

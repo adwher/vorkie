@@ -44,5 +44,5 @@ build
 .temp
 .turbo
 .cache
-.vormik
+.vorkie
 *.tsno.*

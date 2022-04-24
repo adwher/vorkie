@@ -1,4 +1,4 @@
-import { App, Collection, Request, Response } from "vormik"
+import { App, Collection, Request, Response } from "vorkie"
 
 export async function handleList(
     req: Request,

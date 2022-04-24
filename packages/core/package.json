@@ -1,5 +1,5 @@
 {
-    "name": "vormik",
+    "name": "vorkie",
     "version": "1.0.0",
     "description": "Typescript based server + Micro CMS",
     "sideEffects": false,

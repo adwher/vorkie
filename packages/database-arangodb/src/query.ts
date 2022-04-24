@@ -1,4 +1,4 @@
-import { Collection, RawData, QueryBuilder, QueryWhereOperator } from "vormik"
+import { Collection, RawData, QueryBuilder, QueryWhereOperator } from "vorkie"
 import { Database as Connector } from "arangojs"
 
 interface Sort {

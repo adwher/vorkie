@@ -13,10 +13,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/adwher/vormik.git"
+        "url": "git://github.com/adwher/vorkie.git"
     },
     "scripts": {
-        "dev": "turbo run dev --filter=vormik* --parallel",
+        "dev": "turbo run dev --filter=vorkie* --parallel",
         "build": "turbo run build",
         "test": "turbo run test"
     },

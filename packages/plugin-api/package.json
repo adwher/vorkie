@@ -1,5 +1,5 @@
 {
-    "name": "vormik-plugin-api",
+    "name": "vorkie-plugin-api",
     "version": "1.0.0",
     "sideEffects": false,
     "main": "dist/index.js",
@@ -10,7 +10,7 @@
         "build": "tsup"
     },
     "dependencies": {
-        "vormik": "*"
+        "vorkie": "*"
     },
     "devDependencies": {
         "@types/node": "^17.0.21",

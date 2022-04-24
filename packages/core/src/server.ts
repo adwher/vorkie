@@ -72,7 +72,7 @@ export async function startServer(server: Server, config: ServerConfig) {
 function utils(): Middleware {
     return (req, res, next) => {
         res.send = (data: unknown) => {
-            res.setHeader("x-powered-by", "vormik")
+            res.setHeader("x-powered-by", "vorkie")
             res.setHeader("content-type", "application/json")
 
             return res.end(JSON.stringify(data))
@@ -88,7 +88,7 @@ function utils(): Middleware {
 
 function ping(): Middleware {
     return async (req, res) => {
-        res.setHeader("x-powered-by", "vormik")
+        res.setHeader("x-powered-by", "vorkie")
         res.end("_pong")
     }
 }

@@ -1,5 +1,5 @@
 import { Database as Connector } from "arangojs"
-import { Collection, Database } from "vormik"
+import { Collection, Database } from "vorkie"
 import { ArangoQueryBuilder } from "./query"
 
 interface ArangoDBConfig {
